@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"mproject/Models"
+	models "mproject/Models"
 	"mproject/database"
 	"net/http"
 	"time"
@@ -44,7 +44,7 @@ if req.Username == "" || req.Email == "" || len(req.Password) < 6 {
 // CHECK IF user ALREADY EXIST
 // ПРОВЕРКА, СУЩЕСТВУЕТ ЛИ УЖЕ ПОЛЬЗОВАТЕЛЬ
 
-var existing Models.User
+var existing models.User
 err := database.Db.QueryRow(
 	r.Context(),
 	"SELECT id FROM users WHERE email = $1 OR username = $2",
@@ -111,7 +111,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	var user Models.User
+	var user models.User
 	err := database.Db.QueryRow(
 		r.Context(),
 		"SELECT id, email, password_hash FROM users WHERE email = $1",
@@ -129,7 +129,7 @@ if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Pa
 }
 
 token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-	"user.id": user.ID,
+	"user_id": user.ID,
 	"exp": time.Now().Add(72 * time.Hour).Unix(),
 })
 
